@@ -20,7 +20,7 @@ module ErbHiera
 
     mappings.each do |mapping|
       tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
-      tracer.in_span('mapping', attributes: mapping["scope"]+mapping["dir"], kind: :internal) do
+      tracer.in_span('mapping', attributes: mapping["scope"].merge(mapping["dir"]), kind: :internal) do
         ErbHiera.scope  = mapping["scope"]
         input           = mapping["dir"]["input"]
         output          = mapping["dir"]["output"]
