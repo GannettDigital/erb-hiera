@@ -40,7 +40,7 @@ module ErbHiera
         manifests(input).each do |manifest|
           tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
           print manifest.gsub(input, "")
-          tracer.in_span('manifest', attributes: {'file': manifest.gsub(input, "").to_s}, kind: :internal) do
+          tracer.in_span("manifest_#{manifest.gsub(input, "").to_s}", kind: :internal) do
             out_file = File.join(output, manifest.gsub(input, ""))
             generate(out_file, manifest)
           end
