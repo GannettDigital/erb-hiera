@@ -7,8 +7,12 @@ OpenTelemetry::SDK.configure do |c|
   c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
 end
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "../lib"))
+tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
+tracer.in_span(ENV.fetch('namespacebase')) do
 
-require "erb-hiera"
+  $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "../lib"))
 
-ErbHiera.run
+  require "erb-hiera"
+
+  ErbHiera.run
+end

@@ -19,25 +19,31 @@ module ErbHiera
     @options = CLI.parse
 
     mappings.each do |mapping|
-      ErbHiera.scope  = mapping["scope"]
-      input           = mapping["dir"]["input"]
-      output          = mapping["dir"]["output"]
-      @cache          = {}
+      tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
+      tracer.in_span('mapping', attributes: mapping, kind: :internal) do
+        ErbHiera.scope  = mapping["scope"]
+        input           = mapping["dir"]["input"]
+        output          = mapping["dir"]["output"]
+        @cache          = {}
 
-      [:input, :output].each do |location|
-        raise StandardError, "error: undefined #{dir.to_s.split('_')[0]}put" unless binding.local_variable_get(location)
-      end
+        [:input, :output].each do |location|
+          raise StandardError, "error: undefined #{dir.to_s.split('_')[0]}put" unless binding.local_variable_get(location)
+        end
 
-      # if input is a file then out_file is a file too
-      if input =~ /.erb$/
-        generate(output, input)
-        next
-      end
+        # if input is a file then out_file is a file too
+        if input =~ /.erb$/
+          generate(output, input)
+          next
+        end
 
-      # otherwise the input/output are directories and all files should be processed..
-      manifests(input).each do |manifest|
-        out_file = File.join(output, manifest.gsub(input, ""))
-        generate(out_file, manifest)
+        # otherwise the input/output are directories and all files should be processed..
+        manifests(input).each do |manifest|
+          tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
+          tracer.in_span('manifest', attributes: {'file': input}], kind: :internal) do
+            out_file = File.join(output, manifest.gsub(input, ""))
+            generate(out_file, manifest)
+          end
+        end
       end
     end
   rescue => error
