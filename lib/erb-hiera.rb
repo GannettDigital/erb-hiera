@@ -39,7 +39,8 @@ module ErbHiera
         # otherwise the input/output are directories and all files should be processed..
         manifests(input).each do |manifest|
           tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
-          tracer.in_span('manifest', attributes: {'file': manifest.gsub(input, "")}, kind: :internal) do
+          print manifest.gsub(input, "")
+          tracer.in_span('manifest', attributes: {'file': manifest.gsub(input, "").to_s}, kind: :internal) do
             out_file = File.join(output, manifest.gsub(input, ""))
             generate(out_file, manifest)
           end
