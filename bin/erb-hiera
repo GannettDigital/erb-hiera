@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp'
-require 'opentelemetry/instrumentation/net_http'
+require 'opentelemetry/instrumentation/net/http'
 OpenTelemetry::SDK.configure do |c|
   c.service_name = 'erb-hiera'
   c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
