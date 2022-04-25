@@ -20,7 +20,7 @@ module ErbHiera
 
     mappings.each do |mapping|
       tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
-      tracer.in_span('mapping', attributes: mapping["scope"].merge(mapping["dir"]), kind: :internal) do
+      tracer.in_span("mapping_#{mapping["dir"]["output"]}", attributes: mapping["scope"].merge(mapping["dir"]), kind: :internal) do
         ErbHiera.scope  = mapping["scope"]
         input           = mapping["dir"]["input"]
         output          = mapping["dir"]["output"]
@@ -39,7 +39,6 @@ module ErbHiera
         # otherwise the input/output are directories and all files should be processed..
         manifests(input).each do |manifest|
           tracer = OpenTelemetry.tracer_provider.tracer('erb-hiera')
-          print manifest.gsub(input, "")
           tracer.in_span("manifest_#{manifest.gsub(input, "").to_s}", kind: :internal) do
             out_file = File.join(output, manifest.gsub(input, ""))
             generate(out_file, manifest)
