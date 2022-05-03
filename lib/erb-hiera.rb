@@ -34,6 +34,9 @@ module ErbHiera
     end
     if options[:fork] then
       forked_statuses = Process.waitall
+      forked_statuses.each{|forked_status|
+        p forked_status[1]
+      }
       p forked_statuses
       p forked_pids
     end
