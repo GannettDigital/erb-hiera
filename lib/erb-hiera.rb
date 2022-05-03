@@ -56,8 +56,8 @@ module ErbHiera
 
     # if input is a file then out_file is a file too
     if input =~ /.erb$/
-      generate(output, input)
-      next
+      generate(output, input, scope, erb_hiera)
+      return
     end
 
     # otherwise the input/output are directories and all files should be processed..
