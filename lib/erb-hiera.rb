@@ -22,7 +22,7 @@ module ErbHiera
     mappings.each do |mapping|
       if options[:fork] then
         child_pid = fork
-        if child_pid do
+        if child_pid then
           forked_pids[child_pid] = mapping
         else
           run_mapping(mapping)
