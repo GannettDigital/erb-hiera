@@ -33,8 +33,8 @@ module ErbHiera
     end
     if options[:fork] then
       forked_statuses = Process.waitall
-      print forked_statuses
-      print forked_pids
+      p forked_statuses
+      p forked_pids
     end
   rescue => error
     handle_error(error)
