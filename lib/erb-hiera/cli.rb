@@ -10,6 +10,7 @@ module ErbHiera
         opt :verbose,      "print compiled templates"
         opt :debug,        "print backtrace on error"
         opt :dry_run,      "don't write out files"
+        opt :fork,         "fork copies of erb-hiera for each scope"
       end
 
       options = Optimist::with_standard_exception_handling(p) do

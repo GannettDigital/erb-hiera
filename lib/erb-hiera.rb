@@ -17,29 +17,24 @@ module ErbHiera
 
   def self.run
     @options = CLI.parse
+    forked_pids = {}
 
     mappings.each do |mapping|
-      scope       = mapping["scope"]
-      input       = mapping["dir"]["input"]
-      output      = mapping["dir"]["output"]
-      local_hiera = ::Hiera.new(:config => @options[:hiera_config])
-      erb_hiera   = ErbHiera::Hiera.new(scope, @options[:verbose], local_hiera)
-
-      [:input, :output].each do |location|
-        raise StandardError, "error: undefined #{dir.to_s.split('_')[0]}put" unless binding.local_variable_get(location)
+      if options[:fork] then
+        child_pid = fork
+        if child_pid do
+          forked_pids[child_pid] = mapping
+        else
+          run_mapping(mapping)
+        end
+      else
+        run_mapping(mapping)
       end
-
-      # if input is a file then out_file is a file too
-      if input =~ /.erb$/
-        generate(output, input)
-        next
-      end
-
-      # otherwise the input/output are directories and all files should be processed..
-      manifests(input).each do |manifest|
-        out_file = File.join(output, manifest.gsub(input, ""))
-        generate(out_file, manifest, scope, erb_hiera)
-      end
+    end
+    if options[:fork] then
+      forked_statuses = Process.waitall
+      print forked_statuses
+      print forked_pids
     end
   rescue => error
     handle_error(error)
@@ -47,6 +42,30 @@ module ErbHiera
   end
 
   private
+
+  def self.run_mapping(mapping)
+    scope       = mapping["scope"]
+    input       = mapping["dir"]["input"]
+    output      = mapping["dir"]["output"]
+    local_hiera = ::Hiera.new(:config => @options[:hiera_config])
+    erb_hiera   = ErbHiera::Hiera.new(scope, @options[:verbose], local_hiera)
+
+    [:input, :output].each do |location|
+      raise StandardError, "error: undefined #{dir.to_s.split('_')[0]}put" unless binding.local_variable_get(location)
+    end
+
+    # if input is a file then out_file is a file too
+    if input =~ /.erb$/
+      generate(output, input)
+      next
+    end
+
+    # otherwise the input/output are directories and all files should be processed..
+    manifests(input).each do |manifest|
+      out_file = File.join(output, manifest.gsub(input, ""))
+      generate(out_file, manifest, scope, erb_hiera)
+    end
+  end
 
   def self.generate(out_file, manifest, scope, erb_hiera)
     Manifest.info(manifest, out_file, scope) if options[:verbose] || options[:info]
