@@ -33,12 +33,16 @@ module ErbHiera
       end
     end
     if options[:fork] then
+      exit_status = 0
       forked_statuses = Process.waitall
       forked_statuses.each{|forked_status|
-        p forked_status[1]
+        if forked_status[1].exitstatus != 0 then
+          exit_status = forked_status[1].exitstatus
+          p forked_status
+          p forked_pids[forked_status[0]]
+        end
       }
-      p forked_statuses
-      p forked_pids
+      exit exit_status if exit_status != 0
     end
   rescue => error
     handle_error(error)
