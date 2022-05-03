@@ -26,6 +26,7 @@ module ErbHiera
           forked_pids[child_pid] = mapping
         else
           run_mapping(mapping)
+          exit 0
         end
       else
         run_mapping(mapping)
