@@ -18,9 +18,9 @@ Options:
   --config=<s>          specify config file
   --hiera-config=<s>    specify hiera config file
   --dry-run             don't write out files
-  --info                print info before processing erb
   --verbose             print compiled template(s)
   --debug               print backtrace on error
+  --no-fork             don't fork when handling the different scopes
 ```
 
 ## Example
