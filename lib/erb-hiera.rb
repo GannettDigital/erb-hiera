@@ -20,7 +20,7 @@ module ErbHiera
     forked_pids = {}
 
     mappings.each do |mapping|
-      if options[:fork] then
+      unless options[:no_fork] then
         child_pid = fork
         if child_pid then
           forked_pids[child_pid] = mapping
@@ -32,7 +32,7 @@ module ErbHiera
         run_mapping(mapping)
       end
     end
-    if options[:fork] then
+    unless options[:no_fork] then
       exit_status = 0
       forked_statuses = Process.waitall
       forked_statuses.each{|forked_status|
