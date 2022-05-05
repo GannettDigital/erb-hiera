@@ -20,7 +20,7 @@ Options:
   --dry-run             don't write out files
   --verbose             print compiled template(s)
   --debug               print backtrace on error
-  --no-fork             don't fork when handling the different scopes
+  --no-fork             disable forking copies of erb-hiera for each entry in the config
 ```
 
 ## Example
