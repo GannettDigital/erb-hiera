@@ -79,7 +79,7 @@ module ErbHiera
     Manifest.info(manifest, out_file, scope) if options[:verbose] || options[:info]
 
     erb = ERB.new(File.read(manifest), nil, "-")
-    erb.location(manifest,1)
+    erb.location= [manifest,1]
     erb_result = erb.result(erb_hiera.get_binding())
 
     puts erb_result if options[:verbose]
