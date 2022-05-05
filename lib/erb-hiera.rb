@@ -76,7 +76,7 @@ module ErbHiera
   end
 
   def self.generate(out_file, manifest, scope, erb_hiera)
-    Manifest.info(manifest, out_file, scope) if options[:verbose] || options[:info]
+    Manifest.info(manifest, out_file, scope) if options[:verbose]
 
     erb = ERB.new(File.read(manifest), nil, "-")
     erb.location= [manifest,1]
@@ -88,6 +88,10 @@ module ErbHiera
       FileUtils.mkdir_p File.dirname(out_file) unless Dir.exists?(File.dirname(out_file))
       File.write(out_file, erb_result)
     end
+  rescue => error
+    Manifest.info(manifest, out_file, scope) unless options[:verbose]
+    handle_error(error)
+    exit 1
   end
 
   def self.handle_error(error)

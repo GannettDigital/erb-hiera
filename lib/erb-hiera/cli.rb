@@ -6,7 +6,6 @@ module ErbHiera
       p = Optimist::Parser.new do
         opt :config,       "specify config file", :type => :string
         opt :hiera_config, "specify hiera config file", :type => :string
-        opt :info,         "print info before processing erb"
         opt :verbose,      "print compiled templates"
         opt :debug,        "print backtrace on error"
         opt :dry_run,      "don't write out files"
