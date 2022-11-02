@@ -78,7 +78,7 @@ module ErbHiera
   def self.generate(out_file, manifest, scope, erb_hiera)
     Manifest.info(manifest, out_file, scope) if options[:verbose]
 
-    erb = ERB.new(File.read(manifest), nil, "-")
+    erb = ERB.new(File.read(manifest), trim_mode: "-")
     erb.location= [manifest,1]
     erb_result = erb.result(erb_hiera.get_binding())
 
