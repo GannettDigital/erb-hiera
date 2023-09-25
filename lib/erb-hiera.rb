@@ -109,6 +109,6 @@ module ErbHiera
   end
 
   def self.manifests(dir)
-    Dir.glob(File.join(dir, "**", "*")).reject { |file| File.directory? file }
+    Dir.glob(File.join(dir, "**", "*"), File::FNM_DOTMATCH).reject { |file| File.directory? file }
   end
 end
