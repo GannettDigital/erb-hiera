@@ -19,7 +19,7 @@ module ErbHiera
       end
 
       unless value
-        raise KeyError.new("Hiera lookup failed",nil,key)
+        raise KeyError.new("Hiera lookup failed", receiver: Object.new, key: key)
       end
 
       puts "# #{key}: #{value}" if @verbose
